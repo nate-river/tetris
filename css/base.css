@@ -3,13 +3,18 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 body {line-height: 1}
 ol, ul {list-style: none}
 
+body{
+    background:url('../images/bg.png') no-repeat center center;
+    background-size:cover;
+}
 .tetris{
   width:590px;
   height:370px;
   padding:50px 0 0 0;
   background:black;
   margin:30px auto;
-  border-radius:4%/50%;
+  border-radius:1%/90%;
+  box-shadow:0 0 34px black;
 }
 
 canvas{

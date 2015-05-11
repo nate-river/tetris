@@ -10,6 +10,17 @@ window.onload = function(){
 	if(e.keyCode == 39){
 	    t.zuoyou ++;
 	}
+	if(e.keyCode == 38){
+	    t.bianxing();
+	}
+	if(e.keyCode == 40){
+	    t.xia++;
+	}
+	_ctx.clearRect(0,0,202,339);
+	drawSence();
+	t.drawShape();
+	t.drawRemain();
+	e.preventDefault();
     }
     //画出主场景，致敬第一款俄罗斯方块的界面
     function drawSence (){
@@ -35,9 +46,19 @@ window.onload = function(){
 		[0,0,0],
 	    ],
 	    [
+		[1,1],
+		[1,1]
+	    ],
+	    [
 		[0,1,0],
 		[0,1,1],
 		[0,0,1],
+	    ],
+	    [
+		[0,0,1,0],
+		[0,0,1,0],
+		[0,0,1,0],
+		[0,0,1,0]
 	    ],
 	    [
 		[0,1,0],
@@ -47,8 +68,67 @@ window.onload = function(){
 	];
 	this.xia = 0;
 	this.zuoyou = 3;
-	this.remain = [ [0,15],[1,15],[2,15],[3,15],[4,15] ];
+	this.remain = [];
     }
+
+    tetris.prototype.bianxing = function(){
+	//二维数组顺时针旋转90度
+	var matrix = this.curentShape;
+	var n = matrix.length;
+        var limit = (n-1)/2;
+        for(var i=0;i<= limit; i++){
+            for(var j=i;j<n-1-i;j++){
+                var temp = matrix[i][j];
+                matrix[i][j] = matrix[n-1-j][i];
+                matrix[n-1-j][i] = matrix[n-1-i][n-1-j];
+                matrix[n-1-i][n-1-j] = matrix[j][n-1-i];
+                matrix[j][n-1-i] = temp;
+            }
+        }
+	_ctx.clearRect(0,0,202,339);
+	drawSence();
+	this.drawShape();
+    }
+
+
+    //以下三个用来处理块的消除
+    tetris.prototype.positionToData = function(){
+	this.remainData = {};
+	for ( var i = 0;  i < this.remain.length;  i++){
+	    this.remainData[ this.remain[i][1] ] = [];
+	}
+	for ( var i = 0;  i < this.remain.length;  i++){
+	    this.remainData[ this.remain[i][1] ].push(this.remain[i][0]);
+	}
+    }
+
+    tetris.prototype.xiaochu = function(){
+	var t = [];
+	for ( var i in this.remainData ){
+	    if( this.remainData[i].length == 10){
+		continue;
+	    };
+	    t.unshift( this.remainData[i] );
+	}
+	var tmp = {};
+	if( t.length ){
+	    for ( var i = 15;  i > ( 15 - t.length);  i--){
+		tmp[i] = t[15-i]
+	    }
+	}
+	this.remainData = tmp;
+	this.dataToPosition();
+    }
+
+    tetris.prototype.dataToPosition = function(){
+	this.remain  = [];
+	for ( var i in this.remainData ){
+	    for ( var j = 0;  j < this.remainData[i].length;  j++){
+		this.remain.push( [this.remainData[i][j],window.parseInt(i)] );
+	    }
+	}
+    }
+
     //随机选取一种形状出现
     tetris.prototype.born = function(){
 	this.curentShape = this.maps[ Math.round( Math.random()* (this.maps.length-1) ) ];
@@ -78,15 +158,12 @@ window.onload = function(){
     }
     //画形状中的各个块之前，先判断一下
     tetris.prototype.dapanduan = function(){
-	if(this.xia > 13){
-	    return false;
-	}
 	for ( var i = 0;  i < this.curentShape.length;  i++){
 	    for ( var j=0; j<this.curentShape[i].length; j++){
 		if( this.curentShape[i][j] ){
 		    var x = j + this.zuoyou,
 			y = i + this.xia;
-		    if( this.pandan(x,y) ){
+		    if( this.pandan(x,y) || y > 15 ){
 			return false;
 		    }
 		}
@@ -104,6 +181,7 @@ window.onload = function(){
 	}
 	return false;
     }
+
     tetris.prototype.start = function(){
 	var that = this;
 	var tmp;
@@ -120,8 +198,14 @@ window.onload = function(){
 		for ( var i = 0;  i < tmp.length;  i++){
 		    drawBlock(tmp[i][0],tmp[i][1]);
 		}
-		//这里需要看看remain里面有没有一行已经满了的情况。做消除处理
-		that.xiaochu(tmp);
+		//消除
+		that.positionToData();
+		if(that.remainData[0]){
+		    clearInterval(that.interId);
+		    alert('gameOver!');
+		}
+		that.xiaochu();
+		that.dataToPosition();
 
     		that.xia = 0;
     		that.zuoyou = 3;
@@ -129,37 +213,9 @@ window.onload = function(){
 	    }
 	},200)
     }
-    tetris.prototype.xiaochu = function(tmp){
-	// this.remain = [ [0,15],[1,15],[2,15],[3,15],[4,15] ];
-	// tmp = [ [4,13],[4,14],[5,14],[5,15] ];
-
-	//根据tmp的y坐标来判断。看看this remain里这个y坐标下是否有10个元素，如果有，代表这一行满，把他们全消除掉
-	var aa = [];
-	for ( var i = 0;  i < tmp.length;  i++){
-	    aa.push(tmp[i][1]);
-	}
-
-	while( aa.length ){
-	    var y = aa.pop();
-	    var count = 0,
-		t = [];
-	    for ( var i = 0;  i < this.remain.length;  i++){
-		if ( this.remain[i][1] == y ){
-		    count++;  
-		    continue;
-		}
-		t.push(this.remain[i]);
- 	    }
-	    if(count == 10){
-		console.log('man');
-		this.remain = t;
-	    }
-	};
-    }
 
     var t = new tetris();
     t.born();
     t.drawShape();
-    // t.start();
-    
+    t.start();
 }
