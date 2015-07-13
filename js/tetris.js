@@ -1,5 +1,7 @@
 window.onload = function(){
   var
+  UP = 38,DOWN =40,LEFT = 37,RIGHT = 39,
+  SPEED = 400,
   canvas = document.getElementById('canvas'),
   ctx = canvas.getContext('2d'),
   pianyi = 3,
@@ -56,7 +58,7 @@ window.onload = function(){
     }
   }
   function drawSence(){
-    ctx.clearRect(0,0,202,399);
+    ctx.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
     for( var i = 0; i < 10; i++){
       for( var j = 0; j < 16; j++){
         ctx.fillRect(i*20+9,j*21+10,2,2);
@@ -231,10 +233,10 @@ window.onload = function(){
     }
     drawSence();
   }
-  var timerId = setInterval(start,400);
+  var timerId = setInterval(start,SPEED);
   document.onkeydown = function(ev){
     ev.preventDefault();
-    if(ev.keyCode == 40){
+    if(ev.keyCode == DOWN){
       if(!isReachBottom() && !isReachRemain()){
         xia ++;
       }else{
@@ -244,15 +246,15 @@ window.onload = function(){
         }
       }
     }
-    if(ev.keyCode == 37){
+    if(ev.keyCode == LEFT){
       if(!isZhuangqiang(0) && !isZhuangRemin(-1))
         pianyi --;
     }
-    if(ev.keyCode == 39){
+    if(ev.keyCode == RIGHT){
       if(!isZhuangqiang(9) && !isZhuangRemin(1))
         pianyi ++;
     }
-    if(ev.keyCode == 38){
+    if(ev.keyCode == UP){
       if(canBianxing()){
         bianxing();
       }

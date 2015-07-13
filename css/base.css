@@ -9,17 +9,16 @@ body{
 }
 .tetris{
   width:590px;
-  height:370px;
-  padding:50px 0 0 0;
+  padding:30px;
+  /* padding:50px 0 0 0; */
   background:black;
-  margin:120px auto;
+  margin:50px auto;
   border-radius:1%/90%;
   box-shadow:0 0 34px black;
 }
 
 canvas{
     display:block;
-    width:200px;
     margin:0 auto;
     border:1px solid #c2d9f1;
 }
