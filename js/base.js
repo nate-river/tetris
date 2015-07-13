@@ -38,22 +38,6 @@ window.onload = function(){
 	this.curentShape = this.maps[ Math.round( Math.random()* (this.maps.length-1) ) ];
     };
 
-    //画形状中的各个块之前，先判断一下
-    tetris.prototype.dapanduan = function(){
-	for ( var i = 0;  i < this.curentShape.length;  i++){
-	    for ( var j=0; j<this.curentShape[i].length; j++){
-		if( this.curentShape[i][j] ){
-		    var x = j + this.zuoyou,
-			y = i + this.xia;
-		    console.log(x,y);
-		    if( this.pandan(x,y) || y > 15 ){
-			return false;
-		    }
-		}
-	    }
-	}
-	return true;
-    };
     //传入坐标x,y,判断页面中该位置上是否有已画好的块
     tetris.prototype.pandan =function(x,y){
 	for ( var i = 0;  i < this.remain.length;  i++){
@@ -62,6 +46,21 @@ window.onload = function(){
 	    }
 	}
 	return false;
+    };
+    //画形状中的各个块之前，先判断一下
+    tetris.prototype.dapanduan = function(){
+	for ( var i = 0;  i < this.curentShape.length;  i++){
+	    for ( var j=0; j<this.curentShape[i].length; j++){
+		if( this.curentShape[i][j] ){
+		    var x = j + this.zuoyou,
+			y = i + this.xia;
+		    if( this.pandan(x,y) || y > 15 ){
+			return false;
+		    }
+		}
+	    }
+	}
+	return true;
     };
 
     //根据随机出现的形状，画出形状中的各个块
