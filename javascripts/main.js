@@ -263,27 +263,31 @@ window.onload = function(){
   };
 
   touch.on('#canvas', 'tap', function(ev){
-      if(canBianxing()){
-        bianxing();
-      }
+    ev.preventDefault();
+    if(canBianxing()){
+      bianxing();
+    }
   });
   touch.on('#canvas', 'doubletap', function(ev){
-      if(!isReachBottom() && !isReachRemain()){
-        xia ++;
-      }else{
-        if(!next()){
-          console.log("lose!!");
-          return;
-        }
+    ev.preventDefault();
+    if(!isReachBottom() && !isReachRemain()){
+      xia ++;
+    }else{
+      if(!next()){
+        console.log("lose!!");
+        return;
       }
+    }
   });
   touch.on('#canvas', 'swipeleft', function(ev){
-      if(!isZhuangqiang(0) && !isZhuangRemin(-1))
-        pianyi --;
+    ev.preventDefault();
+    if(!isZhuangqiang(0) && !isZhuangRemin(-1))
+      pianyi --;
   });
   touch.on('#canvas', 'swiperight', function(ev){
-      if(!isZhuangqiang(9) && !isZhuangRemin(1))
-        pianyi ++;
+    ev.preventDefault();
+    if(!isZhuangqiang(9) && !isZhuangRemin(1))
+      pianyi ++;
   });
 
 };
